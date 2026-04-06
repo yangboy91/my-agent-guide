@@ -1,5 +1,5 @@
 const CONFIG = {
-  stripeCheckoutUrl: 'https://buy.stripe.com/YOUR_PAYMENT_LINK',
+  stripeCheckoutUrl: 'https://buy.stripe.com/fZu14n1VkfCWeVPfyX1ZS00',
   dashboardApiUrl: '/api/dashboard',
 };
 (function initBuyButton() {
