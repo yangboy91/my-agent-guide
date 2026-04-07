@@ -2,16 +2,22 @@ const CONFIG = {
   stripeCheckoutUrl: 'https://buy.stripe.com/fZu14n1VkfCWeVPfyX1ZS00',
   dashboardApiUrl: '/api/dashboard',
 };
+
 (function initBuyButton() {
   var btn = document.getElementById('buy-btn');
   if (!btn) return;
-    btn.addEventListener('click', function() { /* PDF download handled by href + download attribute */ });
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    window.open(CONFIG.stripeCheckoutUrl, '_blank');
+  });
 })();
+
 (function initRevenueAmount() {
   var el = document.getElementById('revenue-amount');
   if (!el) return;
   fetch(CONFIG.dashboardApiUrl).then(function(r){return r.json();}).then(function(d){if(d&&d.totalRevenue!=null)el.textContent=formatUSD(d.totalRevenue);}).catch(function(){el.textContent='$0';});
 })();
+
 (function initDashboard() {
   var totalEl=document.getElementById('dash-total'),monthEl=document.getElementById('dash-month'),ordersEl=document.getElementById('dash-orders'),tbody=document.getElementById('dash-table-body');
   if(!totalEl)return;
@@ -26,5 +32,6 @@ const CONFIG = {
     }else{tbody.innerHTML='<tr><td colspan="4" style="color:var(--text-dim);padding:2rem 1rem">No orders yet</td></tr>';}
   }).catch(function(){totalEl.textContent='$0';monthEl.textContent='$0';ordersEl.textContent='0';if(tbody)tbody.innerHTML='<tr><td colspan="4" style="color:var(--text-dim);padding:2rem 1rem">Configure your Stripe API key to see live data</td></tr>';});
 })();
+
 function formatUSD(c){var d=(typeof c==='number'&&c>100)?c/100:c;return '$'+Number(d).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});}
 function formatDate(ts){var d=new Date(typeof ts==='number'?ts*1000:ts);return d.toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});}
