@@ -1,0 +1,82 @@
+name: Generate and commit PDF playbook
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/generate-pdf.yml'
+
+jobs:
+  generate-pdf:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install jsPDF
+        run: npm install jspdf
+
+      - name: Generate PDF
+        run: |
+          node -e "
+          const { jsPDF } = require('jspdf');
+          const fs = require('fs');
+          const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+          const W=210,H=297,mL=20,cW=170;
+          const GOLD=[180,150,80],WHITE=[255,255,255],LGRAY=[200,200,210],MGRAY=[140,140,155],DGRAY=[40,40,55];
+          const bg=()=>{doc.setFillColor(15,15,20);doc.rect(0,0,W,H,'F');};
+          const fill=c=>{doc.setFillColor(c[0],c[1],c[2]);};
+          const tc=c=>{doc.setTextColor(c[0],c[1],c[2]);};
+          const pf=(n)=>{doc.setFontSize(7.5);doc.setFont('helvetica','normal');tc(MGRAY);doc.text('Agent Playbook  Build AI That Earns While You Sleep',mL,H-8);tc(GOLD);doc.setFontSize(8);doc.setFont('helvetica','bold');doc.text(String(n),W/2,H-6,{align:'center'});};
+          // Cover
+          bg();fill(GOLD);doc.rect(0,0,W,1.5,'F');
+          doc.setFontSize(7);doc.setFont('helvetica','bold');tc(GOLD);doc.text('AGENT  PLAYBOOK',mL,20);
+          doc.setFontSize(36);doc.setFont('helvetica','bold');tc(WHITE);doc.text('Build an AI Agent',mL,68);
+          doc.setFontSize(36);doc.setFont('helvetica','bolditalic');doc.setTextColor(GOLD[0],GOLD[1],GOLD[2]);doc.text('that earns for you',mL,82);
+          doc.setFontSize(11);doc.setFont('helvetica','normal');tc(MGRAY);doc.text(doc.splitTextToSize('A step-by-step playbook for setting up an AI agent that generates real income on autopilot. No theory. Just systems that actually run.',cW),mL,97);
+          doc.setDrawColor(50,50,65);doc.setLineWidth(0.3);doc.line(mL,114,W-20,114);
+          const stats=[['~60','Pages'],['6','Modules'],['3','Income Paths'],['12','Templates']];
+          stats.forEach((s,i)=>{const x=mL+i*44;doc.setFontSize(20);doc.setFont('helvetica','bold');doc.setTextColor(GOLD[0],GOLD[1],GOLD[2]);doc.text(s[0],x,128);doc.setFontSize(8);doc.setFont('helvetica','normal');tc(MGRAY);doc.text(s[1],x,134);});
+          doc.line(mL,140,W-20,140);
+          ['Ch 1-2   Agent vs. Chatbot','Ch 3-4   Identity and Memory Systems','Ch 5-6   Tool Access and Permissions','Ch 7-8   Three Paths to Income','Ch 9-10  Scheduling and Operation','Ch 11-12 Quick-Start Kit'].forEach((ch,i)=>{tc(i%2===0?LGRAY:MGRAY);doc.setFont('helvetica','normal');doc.setFontSize(9);doc.text(ch,mL,150+i*9);});
+          fill(DGRAY);doc.rect(0,H-22,W,22,'F');doc.setFontSize(8);tc(MGRAY);doc.text('Updated April 2026  my-agent-guide.vercel.app',mL,H-10);tc(GOLD);doc.text('29 USD Single License',W-20-36,H-10);
+          // Add content pages
+          const addPage=(num,title,points)=>{
+            doc.addPage();bg();fill(GOLD);doc.rect(0,0,W,1.5,'F');fill(DGRAY);doc.rect(0,18,W,36,'F');
+            doc.setFontSize(40);doc.setFont('helvetica','bold');doc.setTextColor(60,50,20);doc.text(num,W-20-2,52,{align:'right'});
+            doc.setFontSize(18);doc.setFont('helvetica','bold');tc(WHITE);doc.text(title,mL,34);
+            let y=66;
+            points.forEach(p=>{fill(GOLD);doc.circle(mL+2,y-1.5,1,'F');doc.setFontSize(9.5);doc.setFont('helvetica','normal');tc(LGRAY);const l=doc.splitTextToSize(p,cW-8);doc.text(l,mL+6,y);y+=l.length*5.5+1;});
+          };
+          addPage('01-02','Agent vs. Chatbot + LLM Stack',['An agent acts while a chatbot only responds. The key difference: tool use, memory, and goal persistence.','Recommended stack: Claude 3.5 Sonnet + CrewAI + Supabase pgvector + n8n for scheduling.','Framework options: LangChain (mature, complex), AutoGen (multi-agent), CrewAI (beginner-friendly).','Cost target: under 20 USD per month for a production income agent.']);
+          addPage('03-04','Identity and Memory Systems',['SOUL.md defines your agent persona, goals, constraints, and tone. Keep it static.','IDENTITY.md tracks operational state: niche, platforms, active income paths. Agent updates this each run.','Three-layer memory: L1 working (in-context), L2 episodic (Supabase pgvector), L3 semantic (SOUL.md).','SQL: create table agent_memory (id uuid, content text, embedding vector(1536), run_date timestamptz).']);
+          addPage('05-06','Tool Access + Safety Rails',['Four-tier permission model: Tier 0 read-only, Tier 1 write-local, Tier 2 external-read, Tier 3 full.','Integrate: Gmail API, Playwright browser, Stripe API, Notion/Airtable for knowledge base.','AGENT.md safety config: max_emails_per_run: 10, max_api_spend_usd: 2.00, no_delete_ops: true.','Circuit breakers: rate limiter, spend tracker, action log, rollback checkpoint on every run.']);
+          addPage('07-08','Three Income Paths + Selection',['Path 1 Content: Write SEO articles automatically. Revenue 1K-5K/month. Time to first dollar: 30-90 days.','Path 2 Affiliate: Monitor launches, write reviews, embed links. Revenue 500-10K/month. 14-45 days.','Path 3 Micro-SaaS: Power a subscription tool via Stripe. Revenue 3K-30K/month. 60-120 days.','Start with content if you are new: lowest cost, lowest risk, most forgiving failure mode.']);
+          addPage('09-10','Scheduling + Monitoring',['CRON examples: 0 6 * * * daily research, 0 9 * * 1 weekly review, 0 20 * * 5 revenue report.','Webhooks: Stripe new subscriber triggers welcome email, RSS triggers counter-article writing.','Error recovery: max_retries: 3, backoff: exponential, fallback: log_and_notify.','Key metrics: run success rate above 95%, API cost under 0.50 per run, content rate above 5 per week.']);
+          addPage('11-12','Quick-Start Kit + Checklist',['Copy AGENT.md template, fill YOUR_NAME, YOUR_NICHE, YOUR_PATH, YOUR_EMAIL placeholders.','MEMORY.md init: total_runs: 0, content_published: 0, revenue_lifetime_usd: 0.00, lessons_learned: [].','19-step checklist: choose path, sign up APIs, create config files, set up memory, test Tier 0, enable CRON.','The 30-day rule: observe before optimizing. Let the agent teach you where it struggles first.']);
+          // Back cover
+          doc.addPage();bg();fill(GOLD);doc.rect(0,0,W,1.5,'F');fill(DGRAY);doc.rect(0,H-80,W,80,'F');
+          doc.setFontSize(28);doc.setFont('helvetica','bold');tc(WHITE);doc.text('Now go build it.',mL,80);
+          doc.setFontSize(14);doc.setFont('helvetica','bolditalic');doc.setTextColor(GOLD[0],GOLD[1],GOLD[2]);doc.text('The agent that earns while you sleep starts with a single CRON job.',mL,94);
+          doc.setFontSize(18);doc.setFont('helvetica','bold');tc(WHITE);doc.text('Agent Playbook',mL,H-58);
+          doc.setFontSize(9);tc(MGRAY);doc.text('my-agent-guide.vercel.app',mL,H-42);tc(GOLD);doc.text('2026 Agent Playbook. All rights reserved.',mL,H-30);
+          // Save
+          const pdfBytes = doc.output('arraybuffer');
+          fs.writeFileSync('agent-playbook.pdf', Buffer.from(pdfBytes));
+          console.log('PDF generated: ' + pdfBytes.byteLength + ' bytes');
+          "
+
+      - name: Commit PDF
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add agent-playbook.pdf
+          git diff --staged --quiet || git commit -m "Add generated agent-playbook.pdf"
+          git push
