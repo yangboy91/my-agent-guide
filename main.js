@@ -5,7 +5,7 @@ const CONFIG = {
 (function initBuyButton() {
   var btn = document.getElementById('buy-btn');
   if (!btn) return;
-  btn.addEventListener('click', function(e) { e.preventDefault(); window.open(CONFIG.stripeCheckoutUrl, '_blank'); });
+    btn.addEventListener('click', function() { /* PDF download handled by href + download attribute */ });
 })();
 (function initRevenueAmount() {
   var el = document.getElementById('revenue-amount');
