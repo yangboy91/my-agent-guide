@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment Successful – Agent Playbook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .success-wrap {
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 3rem 1.5rem;
+      gap: 1.5rem;
+    }
+    .success-icon {
+      font-size: 4rem;
+      line-height: 1;
+    }
+    .success-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text, #f0f0f0);
+    }
+    .success-sub {
+      font-size: 1rem;
+      color: var(--text-dim, #888);
+      max-width: 480px;
+      line-height: 1.6;
+    }
+    .btn-download {
+      display: inline-block;
+      padding: 0.9rem 2.2rem;
+      background: var(--accent, #00ff9d);
+      color: #0a0a0a;
+      font-weight: 600;
+      font-size: 1rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .btn-download:hover { opacity: 0.85; }
+    .back-link {
+      font-size: 0.875rem;
+      color: var(--text-dim, #888);
+      text-decoration: none;
+    }
+    .back-link:hover { color: var(--accent, #00ff9d); }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-logo">Agent <span>Playbook</span></div>
+    <ul class="nav-links">
+      <li><a href="index.html#guide">Guide</a></li>
+      <li><a href="dashboard.html">Dashboard</a></li>
+    </ul>
+  </nav>
+  <main>
+    <div class="success-wrap">
+      <div class="success-icon">🎉</div>
+      <h1 class="success-title">Payment Successful!</h1>
+      <p class="success-sub">
+        Thank you for your purchase. Your copy of <strong>How to Build Your Own Agent That Makes Money for You</strong> is ready. Your download should start automatically — if not, click the button below.
+      </p>
+      <a href="/agent-playbook.pdf" download class="btn-download" id="download-btn">
+        ⬇ Download the Playbook (PDF)
+      </a>
+      <a href="index.html" class="back-link">← Back to home</a>
+    </div>
+  </main>
+  <footer>
+    <span>2026 Agent Playbook</span>
+    <a href="dashboard.html">Revenue Dashboard</a>
+    <a href="mailto:hi@yourdomain.com">Contact</a>
+  </footer>
+  <script>
+    // Auto-trigger download when the page loads
+    window.addEventListener('DOMContentLoaded', function() {
+      var btn = document.getElementById('download-btn');
+      if (btn) {
+        // Small delay to let the page render before starting download
+        setTimeout(function() {
+          btn.click();
+        }, 800);
+      }
+    });
+  </script>
+</body>
+</html>
