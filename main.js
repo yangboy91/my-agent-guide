@@ -6,7 +6,10 @@ const CONFIG = {
 };
 
 // Initialize Vercel Web Analytics
-inject();
+// Explicitly set mode to production for accurate tracking
+inject({
+  mode: 'production'
+});
 
 (function initBuyButton() {
   var btn = document.getElementById('buy-btn');
