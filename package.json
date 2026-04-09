@@ -1,7 +1,15 @@
 {
   "name": "my-agent-guide",
   "version": "1.0.0",
+  "scripts": {
+    "build": "esbuild main.js --bundle --outfile=dist/main.js --format=esm",
+    "dev": "esbuild main.js --bundle --outfile=dist/main.js --format=esm --watch"
+  },
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
     "stripe": "^14.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.0"
   }
 }

@@ -1,7 +1,12 @@
+import { inject } from '@vercel/analytics';
+
 const CONFIG = {
   stripeCheckoutUrl: 'https://buy.stripe.com/fZu14n1VkfCWeVPfyX1ZS00',
   dashboardApiUrl: '/api/dashboard',
 };
+
+// Initialize Vercel Web Analytics
+inject();
 
 (function initBuyButton() {
   var btn = document.getElementById('buy-btn');
